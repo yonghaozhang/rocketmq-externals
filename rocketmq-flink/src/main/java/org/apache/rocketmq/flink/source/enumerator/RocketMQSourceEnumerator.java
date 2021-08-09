@@ -18,6 +18,7 @@
 
 package org.apache.rocketmq.flink.source.enumerator;
 
+import org.apache.flink.api.connector.source.*;
 import org.apache.rocketmq.client.consumer.DefaultMQPullConsumer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageQueue;
@@ -25,10 +26,6 @@ import org.apache.rocketmq.flink.source.split.RocketMQPartitionSplit;
 
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.annotation.VisibleForTesting;
-import org.apache.flink.api.connector.source.Boundedness;
-import org.apache.flink.api.connector.source.SplitEnumerator;
-import org.apache.flink.api.connector.source.SplitEnumeratorContext;
-import org.apache.flink.api.connector.source.SplitsAssignment;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.util.FlinkRuntimeException;
 
@@ -186,15 +183,31 @@ public class RocketMQSourceEnumerator
     }
 
     @Override
-    public RocketMQSourceEnumState snapshotState(long checkpointId) {
+    public RocketMQSourceEnumState snapshotState() throws Exception {
         return new RocketMQSourceEnumState(readerIdToSplitAssignments);
     }
+
 
     @Override
     public void close() {
         if (consumer != null) {
             consumer.shutdown();
         }
+    }
+
+    @Override
+    public void notifyCheckpointComplete(long checkpointId) throws Exception {
+
+    }
+
+    @Override
+    public void notifyCheckpointAborted(long checkpointId) throws Exception {
+
+    }
+
+    @Override
+    public void handleSourceEvent(int subtaskId, SourceEvent sourceEvent) {
+
     }
 
     // ----------------- private methods -------------------
